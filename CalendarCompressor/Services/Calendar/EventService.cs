@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CalendarCompressor.Extensions;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
 
@@ -32,19 +33,20 @@ namespace CalendarCompressor.Services.Calendar
             return calendars.Items;
         }
 
-        public IList<Event> GetUpcomingEvents(string calendarId, int maxResults)
+        public IList<Event> GetThisWeeksEvents(string calendarId)
         {
-            // Define parameters of request.
+            var startOfTheWeek = DateTime.Now.StartOfWeek();
+            var endOfTheWeek = startOfTheWeek.AddDays(7).AddMilliseconds(-1);
+
             var request = _calendarService.Events.List(calendarId);
-            request.TimeMin = DateTime.Now;
+            request.TimeMin = startOfTheWeek;
+            request.TimeMax = endOfTheWeek;
             request.ShowDeleted = false;
             request.SingleEvents = true;
-            request.MaxResults = maxResults;
+            request.MaxResults = 1000;
             request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
 
-            // List events.
-            Events events = request.Execute();
-
+            var events = request.Execute();
             return events.Items;
         }
     }
