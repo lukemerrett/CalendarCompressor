@@ -10,25 +10,30 @@ namespace CalendarCompressor
         {
             var service = EventServiceFactory.GetAuthenticatedService(new StaticConfiguration());
 
-            var events = service.GetUpcomingEvents(10);
-
-            Console.WriteLine("Upcoming events:");
-
-            if (events != null && events.Count > 0)
+            var calendars = service.GetAvailableCalendars(true);
+            
+            foreach (var calendar in calendars)
             {
-                foreach (var eventItem in events)
+                Console.WriteLine("\nUpcoming events for {0}:", calendar.Summary);
+                var events = service.GetUpcomingEvents(calendar.Id, 10);
+
+                if (events != null && events.Count > 0)
                 {
-                    string when = eventItem.Start.DateTime.ToString();
-                    if (string.IsNullOrEmpty(when))
+                    foreach (var eventItem in events)
                     {
-                        when = eventItem.Start.Date;
+                        string when = eventItem.Start.DateTime.ToString();
+                        if (string.IsNullOrEmpty(when))
+                        {
+                            when = eventItem.Start.Date;
+                        }
+
+                        Console.WriteLine("{0} - {1} ({2})", calendar.Summary, eventItem.Summary, when);
                     }
-                    Console.WriteLine("{0} ({1})", eventItem.Summary, when);
                 }
-            }
-            else
-            {
-                Console.WriteLine("No upcoming events found.");
+                else
+                {
+                    Console.WriteLine("No upcoming events found.");
+                }
             }
 
             Console.WriteLine("\n\nPress enter to exit");

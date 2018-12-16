@@ -5,6 +5,8 @@ namespace CalendarCompressor.Services.Calendar
 {
     public interface IEventService
     {
-        IList<Event> GetUpcomingEvents(int maxResults);
+        IList<CalendarListEntry> GetAvailableCalendars(bool onlyVisibleCalendars);
+
+        IList<Event> GetUpcomingEvents(string calendarId, int maxResults);
     }
 }
