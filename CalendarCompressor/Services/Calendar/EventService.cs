@@ -18,7 +18,7 @@ namespace CalendarCompressor.Services.Calendar
         public IList<Event> GetUpcomingEvents(int maxResults)
         {
             // Define parameters of request.
-            EventsResource.ListRequest request = _calendarService.Events.List("primary");
+            var request = _calendarService.Events.List("primary");
             request.TimeMin = DateTime.Now;
             request.ShowDeleted = false;
             request.SingleEvents = true;
