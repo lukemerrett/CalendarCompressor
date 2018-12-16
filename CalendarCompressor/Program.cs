@@ -15,7 +15,7 @@ namespace CalendarCompressor
             foreach (var calendar in calendars)
             {
                 Console.WriteLine("\nUpcoming events for {0}:", calendar.Summary);
-                var events = service.GetThisWeeksEvents(calendar.Id);
+                var events = service.GetNextWeeksEvents(calendar.Id);
 
                 if (events != null && events.Count > 0)
                 {

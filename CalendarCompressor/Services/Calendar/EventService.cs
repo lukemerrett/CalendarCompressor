@@ -33,9 +33,9 @@ namespace CalendarCompressor.Services.Calendar
             return calendars.Items;
         }
 
-        public IList<Event> GetThisWeeksEvents(string calendarId)
+        public IList<Event> GetNextWeeksEvents(string calendarId)
         {
-            var startOfTheWeek = DateTime.Now.StartOfWeek();
+            var startOfTheWeek = DateTime.Now.AddDays(7).StartOfWeek();
             var endOfTheWeek = startOfTheWeek.AddDays(7).AddMilliseconds(-1);
 
             var request = _calendarService.Events.List(calendarId);
