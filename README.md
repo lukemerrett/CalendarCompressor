@@ -1,6 +1,8 @@
 # CalendarCompressor
 
-Takes an existing Google Calendar and shrinks down meetings to fit in the shortest window
+Takes an existing Google Calendar and shrinks down meetings to fit in the shortest window.
+
+Currently it retrieves all of next weeks events in your currently visibile calendars on Google Calendar.
 
 ## Prerequisites 
 
