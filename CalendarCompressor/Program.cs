@@ -1,63 +1,22 @@
-﻿using Google.Apis.Auth.OAuth2;
-using Google.Apis.Calendar.v3;
-using Google.Apis.Calendar.v3.Data;
-using Google.Apis.Services;
-using Google.Apis.Util.Store;
+﻿using CalendarCompressor.Models;
+using CalendarCompressor.Services.Calendar;
 using System;
-using System.IO;
-using System.Threading;
 
 namespace CalendarCompressor
 {
     public class Program
     {
-        // If modifying these scopes, delete your previously saved credentials
-        // at ~/.credentials/calendar-dotnet-quickstart.json
-        private static readonly string[] Scopes = { CalendarService.Scope.CalendarReadonly };
-        private static string ApplicationName = "Calendar Compressor";
-
         public static void Main(string[] args)
         {
-            UserCredential credential;
+            var service = EventServiceFactory.GetAuthenticatedService(new StaticConfiguration());
 
-            using (var stream = new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
-            {
-                // The file token.json stores the user's access and refresh tokens, and is created
-                // automatically when the authorization flow completes for the first time.
-                string credPath = "token.json";
+            var events = service.GetUpcomingEvents(10);
 
-                credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.Load(stream).Secrets,
-                    Scopes,
-                    "user",
-                    CancellationToken.None,
-                    new FileDataStore(credPath, true)).Result;
-
-                Console.WriteLine("Credential file saved to: " + credPath);
-            }
-
-            // Create Google Calendar API service.
-            var service = new CalendarService(new BaseClientService.Initializer()
-            {
-                HttpClientInitializer = credential,
-                ApplicationName = ApplicationName,
-            });
-
-            // Define parameters of request.
-            EventsResource.ListRequest request = service.Events.List("primary");
-            request.TimeMin = DateTime.Now;
-            request.ShowDeleted = false;
-            request.SingleEvents = true;
-            request.MaxResults = 10;
-            request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
-
-            // List events.
-            Events events = request.Execute();
             Console.WriteLine("Upcoming events:");
 
-            if (events.Items != null && events.Items.Count > 0)
+            if (events != null && events.Count > 0)
             {
-                foreach (var eventItem in events.Items)
+                foreach (var eventItem in events)
                 {
                     string when = eventItem.Start.DateTime.ToString();
                     if (string.IsNullOrEmpty(when))
@@ -71,6 +30,8 @@ namespace CalendarCompressor
             {
                 Console.WriteLine("No upcoming events found.");
             }
+
+            Console.WriteLine("\n\nPress enter to exit");
             Console.Read();
 
         }
